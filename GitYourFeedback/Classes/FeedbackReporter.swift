@@ -46,11 +46,13 @@ open class FeedbackReporter {
         self.listenForScreenshot()
     }
 
-	public init(options: FeedbackOptions, datasource: FeedbackReporterDatasource) {
+    public init(options: FeedbackOptions, datasource: FeedbackReporterDatasource, addObserverForScreenshot: Bool = true) {
 		self.options = options
 		self.datasource = datasource
 		
-		self.listenForScreenshot()
+        if addObserverForScreenshot {
+            self.listenForScreenshot()
+        }
 	}
 
 	
@@ -183,7 +185,7 @@ open class FeedbackReporter {
             errorMessage += status
         }
         
-        errorMessage += " for repo \(self.options?.repo)."
+        errorMessage += " for repo \(self.options?.repo ?? "nil")."
         DispatchQueue.main.sync {
             completionHandler(Result.Failure(GitYourFeedbackError.GithubSaveError(errorMessage)))
         }

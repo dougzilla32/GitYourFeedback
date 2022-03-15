@@ -53,6 +53,7 @@ class FeedbackInterfaceViewController: UIViewController {
         stack.addArrangedSubview(footerLabel)
         
         view.addSubview(imagePreviewButton)
+        view.addSubview(imagePreviewLabel)
         view.addSubview(activitySpinner)
         setupConstraints()
         
@@ -141,7 +142,13 @@ class FeedbackInterfaceViewController: UIViewController {
         scrollView.contentSize = CGSize(width: view.frame.size.width, height: stack.frame.size.height)
         
         let buttonFrame = view.convert(imagePreviewButton.frame, to: bodyField).insetBy(dx: -10, dy: -10)
-        let exclusionPath = UIBezierPath(rect: buttonFrame)
+        let labelFrame = view.convert(imagePreviewLabel.frame, to: bodyField).insetBy(dx: -10, dy: -10)
+
+        let exclusionPath = UIBezierPath(rect: CGRect(
+            x: min(labelFrame.origin.x, buttonFrame.origin.x),
+            y: min(labelFrame.origin.y, buttonFrame.origin.y),
+            width: max(labelFrame.size.width, buttonFrame.size.width),
+            height: labelFrame.size.height + buttonFrame.size.height + 3))
         bodyField.textContainer.exclusionPaths = [exclusionPath]
     }
     
@@ -156,8 +163,11 @@ class FeedbackInterfaceViewController: UIViewController {
         stack.rightAnchor.constraint(equalTo: scrollView.layoutMarginsGuide.rightAnchor).isActive = true
         
         imagePreviewButton.trailingAnchor.constraint(equalTo: bodyField.trailingAnchor, constant: -8).isActive = true
-        imagePreviewButton.bottomAnchor.constraint(equalTo: bodyField.bottomAnchor, constant: -8).isActive = true
+        imagePreviewButton.bottomAnchor.constraint(equalTo: bodyField.bottomAnchor, constant: -(4 + imagePreviewLabel.intrinsicContentSize.height + 3)).isActive = true
         
+        imagePreviewLabel.trailingAnchor.constraint(equalTo: bodyField.trailingAnchor, constant: -8).isActive = true
+        imagePreviewLabel.bottomAnchor.constraint(equalTo: bodyField.bottomAnchor, constant: -4).isActive = true
+
         bodyField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2).isActive = true
 
         activitySpinner.centerXAnchor.constraint(equalTo: bodyField.centerXAnchor).isActive = true
@@ -232,7 +242,7 @@ class FeedbackInterfaceViewController: UIViewController {
         var imageData: Data?
         if let image = image {
             let resizedImage = image.resizeToUploadingSize()
-            imageData = resizedImage.jpegData(compressionQuality: 20)
+            imageData = resizedImage.pngData()
         }
         
         reporter?.submit(title: titleText, body: bodyField.text, email: emailText, screenshotData: imageData, completionHandler: { (result) in
@@ -361,6 +371,21 @@ class FeedbackInterfaceViewController: UIViewController {
         button.layer.borderWidth = 1
 
         return button
+    }()
+    
+    private let imagePreviewLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.text = "Tap to edit"
+        label.textAlignment = .center
+        label.numberOfLines = 0
+
+        let width = label.widthAnchor.constraint(equalToConstant: 80)
+        width.priority = UILayoutPriority(rawValue: 999)
+        width.isActive = true
+
+        return label
     }()
     
     private let submitButton: UIButton = {
