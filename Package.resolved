@@ -1,13 +1,13 @@
 {
-  "originHash" : "371b66d20418a0f577dd72908748cad8e03eb2b1e1253c99b72018ac55abe889",
+  "originHash" : "7e675ad4852046d1ea9ce697a7111b98f1dd504eeee5518eeab70a424bc2c1dc",
   "pins" : [
     {
       "identity" : "climageeditor",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dougzilla32/CLImageEditor",
       "state" : {
-        "revision" : "efd5cc67311555b775084b0206f2b30f7006734d",
-        "version" : "0.0.1"
+        "revision" : "f1fc7bd0028de13ba86f63bca3b8167bfb9718ce",
+        "version" : "0.0.2"
       }
     },
     {
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "811326995377af216b970ae3afb0645ca94986c8",
         "version" : "6.0.0"
+      }
+    },
+    {
+      "identity" : "reachability.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ashleymills/Reachability.swift",
+      "state" : {
+        "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
+        "version" : "5.2.4"
       }
     }
   ],

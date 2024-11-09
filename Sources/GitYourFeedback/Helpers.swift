@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Reachability
 import UIKit
 
 struct Helpers {
@@ -74,9 +75,9 @@ struct Helpers {
     
     public static func isConnectedViaWiFi () -> Bool {
         
-        let reachability = Reachability()!
+        let reachability = try! Reachability()
         
-        if reachability.isReachableViaWiFi {
+        if reachability.connection == .wifi {
             return true
         } else {
             return false
