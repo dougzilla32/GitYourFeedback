@@ -1,5 +1,5 @@
 {
-  "originHash" : "0cf264ae9b7310946a4d1b6865a4c97d7ddc0ea56d69ca712dbaf38ba8b3cd0b",
+  "originHash" : "371b66d20418a0f577dd72908748cad8e03eb2b1e1253c99b72018ac55abe889",
   "pins" : [
     {
       "identity" : "climageeditor",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "efd5cc67311555b775084b0206f2b30f7006734d",
         "version" : "0.0.1"
+      }
+    },
+    {
+      "identity" : "grmustache.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRMustache.swift",
+      "state" : {
+        "revision" : "811326995377af216b970ae3afb0645ca94986c8",
+        "version" : "6.0.0"
       }
     }
   ],

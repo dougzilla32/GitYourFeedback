@@ -444,7 +444,7 @@ extension FeedbackInterfaceViewController: UIImagePickerControllerDelegate, UINa
     }
 }
 
-extension FeedbackInterfaceViewController: CLImageEditorDelegate {
+extension FeedbackInterfaceViewController: @preconcurrency CLImageEditorDelegate {
     func imageEditor(_ editor: CLImageEditor!, didFinishEdittingWith image: UIImage!) {
         self.image = image
         editor.dismiss(animated: true, completion: nil)

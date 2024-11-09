@@ -8,6 +8,7 @@
 
 import Foundation
 import Photos
+import UIKit
 
 struct MediaQuery {
     static func fetchLastImage(completionHandler: @escaping (UIImage?) -> Void) {

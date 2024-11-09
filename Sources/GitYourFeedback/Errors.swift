@@ -11,7 +11,8 @@
 
 import Foundation
 
-enum Result<T> {
+
+enum Result<T: Sendable> {
     case Success(T)
     case Failure(Error)
 }

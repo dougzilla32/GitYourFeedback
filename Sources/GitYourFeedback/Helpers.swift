@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Helpers {
     static let defaultsSuiteName = "com.gabekangas.gityourfeedback"
@@ -26,6 +27,7 @@ struct Helpers {
         return nil
     }
     
+    @MainActor
     static func applicationDetails() -> [String: String] {
         var appDetails = [String:String]()
         

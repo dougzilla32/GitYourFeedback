@@ -8,10 +8,10 @@
 
 import Foundation
 
-class GoogleStorage {
-    var bucket: String?
+final class GoogleStorage: Sendable {
+//    var bucket: String?
     
-    func upload(data: Data, urlString: String, completionHandler: @escaping (Result<String>) -> Void) {
+    func upload(data: Data, urlString: String, completionHandler: @Sendable @escaping (Result<String>) -> Void) {
         // Tell Google this is a one-time, non-multipart upload
 		var urlComponents = URLComponents(string: urlString)
 		urlComponents?.appendQueryItem(name: "uploadType", value: "media")

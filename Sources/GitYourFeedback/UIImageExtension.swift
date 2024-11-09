@@ -7,9 +7,11 @@
 //
 
 import Foundation
+import UIKit
 
 extension UIImage {
     
+    @MainActor
     func resize(to size: CGSize) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(size, true, UIScreen.main.scale)
         self.draw(in: CGRect(origin: CGPoint.zero, size: size))
@@ -18,6 +20,7 @@ extension UIImage {
         return scaledImage!
     }
     
+    @MainActor
     func resizeToUploadingSize() -> UIImage {
         let recommendedSize = CGSize(width: 450, height: 800)
 

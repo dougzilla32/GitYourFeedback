@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-
 import Mustache
 
 /// This is required in order to know where to upload your screenshot to at the time of submission.
@@ -30,9 +29,10 @@ public protocol FeedbackOptions {
     var repo: String { get set }
 }
 
+@MainActor
 open class FeedbackReporter {
     
-    private (set) var options: FeedbackOptions?
+    private var options: FeedbackOptions?
     open var datasource: FeedbackReporterDatasource?
     
     private let googleStorage = GoogleStorage()
@@ -60,7 +60,9 @@ open class FeedbackReporter {
         let name = UIApplication.userDidTakeScreenshotNotification
         
         NotificationCenter.default.addObserver(forName: name, object: nil, queue: OperationQueue.main) { notification in
-            self.display(viewController: nil, shouldFetchScreenshot: true)
+            DispatchQueue.main.async {
+                self.display(viewController: nil, shouldFetchScreenshot: true)
+            }
         }
     }
 	
@@ -78,7 +80,7 @@ open class FeedbackReporter {
         topmostViewController.present(feedbackViewController!, animated: true, completion: nil)
     }
     
-    internal func submit(title: String, body: String?, email: String, screenshotData: Data?, completionHandler: @escaping (Result<Bool>) -> Void) {
+    internal func submit(title: String, body: String?, email: String, screenshotData: Data?, completionHandler: @MainActor @Sendable @escaping (Result<Bool>) -> Void) {
         // Verify we have a datasource, it's requird.
         guard let datasource = datasource else {
             assertionFailure("A datasource must be set in order to how to upload screenshots.")
@@ -92,21 +94,24 @@ open class FeedbackReporter {
             
             datasource.uploadUrl({ (googleStorageUrl) in
                 
-                var screenshotURL: String?
                 
                 googleStorage.upload(data: screenshotData, urlString: googleStorageUrl) { (result) in
                     
-                    do {
-                        screenshotURL = try result.resolve()
-                    } catch GitYourFeedbackError.ImageUploadError(let errorMessage){
-                        completionHandler(Result.Failure(GitYourFeedbackError.ImageUploadError(errorMessage)))
-                    } catch {
-                        completionHandler(Result.Failure(GitYourFeedbackError.ImageUploadError(error.localizedDescription)))
+                    DispatchQueue.main.async {
+                        var screenshotURL: String?
+                        do {
+                            screenshotURL = try result.resolve()
+                        } catch GitYourFeedbackError.ImageUploadError(let errorMessage){
+                            completionHandler(Result.Failure(GitYourFeedbackError.ImageUploadError(errorMessage)))
+                        } catch {
+                            completionHandler(Result.Failure(GitYourFeedbackError.ImageUploadError(error.localizedDescription)))
+                        }
+                        
+                        guard let screenshotURL = screenshotURL else { return }
+                        
+                        let issueBody = self.generateIssueContents(title: title, body: body, email: email, screenshotURL: screenshotURL, additionalData: additionalDataString)
+                        self.createIssue(issueTitle: title, issueBody: issueBody, screenshotURL: screenshotURL, completionHandler: completionHandler)
                     }
-                    
-                    guard let screenshotURL = screenshotURL else { return }
-                    let issueBody = self.generateIssueContents(title: title, body: body, email: email, screenshotURL: screenshotURL, additionalData: additionalDataString)
-                    self.createIssue(issueTitle: title, issueBody: issueBody, screenshotURL: screenshotURL, completionHandler: completionHandler)
                 }
             })
 
@@ -142,7 +147,7 @@ open class FeedbackReporter {
         return rendering
     }
     
-    private func createIssue(issueTitle: String, issueBody: String, screenshotURL: String?, completionHandler: @escaping (Result<Bool>) -> Void) {
+    private func createIssue(issueTitle: String, issueBody: String, screenshotURL: String?, completionHandler: @MainActor @Sendable @escaping (Result<Bool>) -> Void) {
         var payload: [String:Any] = ["title": "Feedback: " + issueTitle, "body": issueBody]
         if let labels = self.datasource?.issueLabels?() {
             payload["labels"] = labels
@@ -166,19 +171,21 @@ open class FeedbackReporter {
                     return
                 }
                 
-                // If it wasn't successful, handle the error
-                if response.statusCode != 201 {
-                    self.handleGithubError(response: response, completionHandler: completionHandler)
-                    return
+                DispatchQueue.main.async {
+                    // If it wasn't successful, handle the error
+                    if response.statusCode != 201 {
+                        self.handleGithubError(response: response, completionHandler: completionHandler)
+                        return
+                    }
+                    
+                    completionHandler(Result.Success(true))
                 }
-                
-                completionHandler(Result.Success(true))
             }
             task.resume()
         }
     }
     
-    private func handleGithubError(response: HTTPURLResponse, completionHandler: @escaping (Result<Bool>) -> Void) {
+    private func handleGithubError(response: HTTPURLResponse, completionHandler: @MainActor @Sendable @escaping (Result<Bool>) -> Void) {
         var errorMessage = String()
         
         if let status = response.allHeaderFields["Status"] as? String {
@@ -186,9 +193,7 @@ open class FeedbackReporter {
         }
         
         errorMessage += " for repo \(self.options?.repo ?? "nil")."
-        DispatchQueue.main.sync {
-            completionHandler(Result.Failure(GitYourFeedbackError.GithubSaveError(errorMessage)))
-        }
+        completionHandler(Result.Failure(GitYourFeedbackError.GithubSaveError(errorMessage)))
     }
     
     private func createRequest() -> URLRequest? {
