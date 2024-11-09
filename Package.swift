@@ -11,14 +11,19 @@ let package = Package(
             name: "GitYourFeedback",
             targets: ["GitYourFeedback"]),
     ],
+    dependencies: [
+        // Dependencies declare other packages that this package depends on.
+        .package(url: "https://github.com/dougzilla32/CLImageEditor", from: "0.0.1"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "GitYourFeedback"),
-        .testTarget(
-            name: "GitYourFeedbackTests",
-            dependencies: ["GitYourFeedback"]
+            name: "GitYourFeedback",
+            dependencies: ["CLImageEditor"],
+            resources: [
+                .process("Resources")
+            ]
         ),
     ]
 )
