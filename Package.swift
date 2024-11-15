@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/dougzilla32/CLImageEditor", from: "0.0.2"),
+        .package(url: "https://github.com/dougzilla32/CLImageEditor", from: "0.0.3"),
         .package(url: "https://github.com/groue/GRMustache.swift", from: "6.0.0"),
         .package(url: "https://github.com/ashleymills/Reachability.swift", from: "5.0.0")
     ],

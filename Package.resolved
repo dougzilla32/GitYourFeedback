@@ -1,13 +1,13 @@
 {
-  "originHash" : "7e675ad4852046d1ea9ce697a7111b98f1dd504eeee5518eeab70a424bc2c1dc",
+  "originHash" : "ba2ccce816d4abad9b98fc0644bc3e43f9cdcfb381ac397cfd74fecf211e7439",
   "pins" : [
     {
       "identity" : "climageeditor",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dougzilla32/CLImageEditor",
       "state" : {
-        "revision" : "f1fc7bd0028de13ba86f63bca3b8167bfb9718ce",
-        "version" : "0.0.2"
+        "revision" : "742dd3da900a7a12b61b95104bb1160fca2850ff",
+        "version" : "0.0.3"
       }
     },
     {
